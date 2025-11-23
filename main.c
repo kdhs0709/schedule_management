@@ -1,53 +1,56 @@
 #include <stdio.h>
-#include <stdlib.h>
 #include "account.h"
 #include "lecture.h"
-
-void clearInput() {
-    int c;
-    while ((c = getchar()) != '\n' && c != EOF);
-}
+#include "selection.h"
 
 int main() {
+    Account acc;
+    Lecture lectures[200];
+    Basket basket;
+
     int choice;
 
-    while (1) {
-        printf("\n==== 메인 메뉴 ====\n");
-        printf("1. 계정 생성\n");
-        printf("2. 로그인\n");
-        printf("3. 전체 강의 목록 보기\n");
-        printf("4. 종료\n");
-        printf("입력: ");
-        
-        scanf("%d", &choice);
-        clearInput();
+    printf("===== 수강신청 시스템 =====\n");
+    printf("1. 계정 생성\n");
+    printf("2. 로그인\n");
+    printf("선택: ");
+    scanf("%d", &choice);
 
-        switch (choice) {
-            case 1:
-                createAccount();
-                break;
-
-            case 2:
-                if (loginAccount()) {
-                    printf("\n>> 로그인 성공!\n");
-                } else {
-                    printf("\n>> 로그인 실패!\n");
-                }
-                break;
-
-            case 3:
-                loadLectures("subData.csv");
-                printLectures();
-                break;
-
-            case 4:
-                printf("\n프로그램 종료.\n");
-                return 0;
-
-            default:
-                printf("잘못된 입력입니다.\n");
-        }
+    if(choice == 1) createAccount();
+    if(!login(&acc)) {
+        printf("[오류] 로그인 실패\n");
+        return 0;
     }
 
-    return 0;
+    printf("\n\n[로그인 성공] %s님 환영합니다.\n", acc.name);
+
+    int cnt = loadLectures(lectures);
+    initBasket(&basket);
+
+    while(1) {
+        printf("\n=== 메뉴 ===\n");
+        printf("1. 전체 강의 조회\n");
+        printf("2. 수강 신청\n");
+        printf("3. 신청 목록 보기\n");
+        printf("4. 종료\n");
+        printf("선택: ");
+        scanf("%d", &choice);
+
+        if(choice == 1)
+            printLectures(lectures, cnt);
+
+        else if(choice == 2) {
+            int n;
+            printLectures(lectures, cnt);
+            printf("신청할 번호: ");
+            scanf("%d", &n);
+            addSubject(&basket, lectures[n-1]);
+        }
+
+        else if(choice == 3)
+            printSelected(&basket);
+
+        else if(choice == 4)
+            break;
+    }
 }
