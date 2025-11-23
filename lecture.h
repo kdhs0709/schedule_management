@@ -1,17 +1,17 @@
 #ifndef LECTURE_H
 #define LECTURE_H
 
+#include "util.h"
+
 typedef struct {
     char code[30];
-    char name[100];
-    char professor[50];
+    char name[50];
+    char prof[50];
     char time[50];
-    char room[50];
-    int grade;
     double credit;
 } Lecture;
 
-void loadLectures(const char *filename);
-void printLectures();
+int loadLectures(Lecture arr[]);
+void printLectures(Lecture arr[], int n);
 
 #endif
