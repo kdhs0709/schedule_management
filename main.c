@@ -3,6 +3,8 @@
 #include <locale.h>
 #include <stdio.h>
 
+#include "dday.h"
+#include "schedule.h"
 #include "util.h"
 #include "account.h"
 #include "lecture.h"
@@ -23,6 +25,7 @@ int main(void) {
     Account user;
     Lecture lectures[MAX_LECTURES];
     Basket basket;
+    ScheduleManager schedule;
 
     int lectureCount = 0;
     int menu = 0;
@@ -42,10 +45,12 @@ int main(void) {
         if (login(USER_FILE, &user))
             break;
     }
+    showDday();
 
     lectureCount = loadLectures(LEC_FILE, lectures, MAX_LECTURES);
     basketLoad(&basket, SELECT_FILE);
     loadGPA();
+    loadSchedule(&schedule);
 
     printf("\n[알림] 강의 %d개 로드 완료\n", lectureCount);
 
@@ -58,7 +63,9 @@ int main(void) {
         printf("5. 학점 계산\n");
         printf("6. 계열별 강의 보기\n");
         printf("7. 수강 취소\n");
-        printf("8. 저장 후 종료\n");
+        printf("8. 개인 일정 관리\n");
+        printf("9. 임박 일정 알림\n");
+        printf("10. 저장 후 종료\n");
 
         scanf("%d", &menu);
         clearInputBuffer();
@@ -104,8 +111,31 @@ int main(void) {
             basketRemoveLecture(&basket);
             break;
 
-        case 8:
+        case 8: {
+            int sub;
+            printf("\n[개인 일정 관리]\n");
+            printf("1. 일정 보기\n");
+            printf("2. 일정 추가\n");
+            printf("3. 일정 삭제\n");
+            printf("선택: ");
+            scanf("%d", &sub);
+            clearInputBuffer();
+
+            if (sub == 1) printSchedule(&schedule);
+            else if (sub == 2) addSchedule(&schedule);
+            else if (sub == 3) removeSchedule(&schedule);
+
+            system("pause");
+            break;
+        }
+        case 9:
+            showUpcoming(&schedule);
+            system("pause");
+            break;
+
+        case 10:
             basketSave(&basket, SELECT_FILE);
+            saveSchedule(&schedule);
             printf("저장 완료. 종료합니다.\n");
             running = 0;
             break;
