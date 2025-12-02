@@ -2,14 +2,13 @@
 #define ACCOUNT_H
 
 typedef struct {
-    char id[50];
-    char pw[50];
-    char name[50];
-    char dept[50];
-    char email[100];
+	char id[32];
+	char pw[32];
+	char name[32];
+	char major[64];
 } Account;
 
-void createAccount();
-int login(Account *loggedIn);
+int login(const char* filename, Account* out);
+void createAccount(const char* filename);
 
 #endif
